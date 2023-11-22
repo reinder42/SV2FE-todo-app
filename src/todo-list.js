@@ -28,7 +28,7 @@ export class TodoList extends LitElement {
 
             // Only set attribute if task is done (empty attribute)
             if(task.done) {
-                item.setAttribute('done')
+                item.setAttribute('done', '')
             }
 
             // Add event listener for custom 'taskupdate' event from <todo-item>
