@@ -4,6 +4,9 @@ export class TaskService {
 
     constructor() {
 
+        // Constant for local storage key
+        this.LOCAL_STORAGE_KEY = '_tasks'
+
         // Array with task objects
         this.tasks = []
 
@@ -18,12 +21,39 @@ export class TaskService {
      */
     _loadAllTasks() {
 
-        // Hard-coded tasks
-        this.tasks = [
-            'Remember the milk',
-            'Do the dishes',
-            'Eat pancakes'
-        ].map(text => new Task(text, false))
+        const tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
+
+        console.log(tasks)
+
+        // Check integrity of 'tasks'
+        // ...
+
+        if(tasks == null) {
+
+            // Hard-coded tasks
+            this.tasks = [
+                'Remember the milk',
+                'Do the dishes',
+                'Eat pancakes'
+            ].map(text => new Task(text, false))
+        } else {
+
+            // Parse from JSON string to JS objects
+            this.tasks = JSON.parse(tasks)
+
+            console.log(this.tasks)
+        }
+    }
+
+    /**
+     * Store tasks in local storage
+     *
+     * @private
+     */
+    _storeAllTasks() {
+
+        // Local storage only stores strings, so we convert from object to string via JSON
+        window.localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(this.tasks))
     }
 
     /**
@@ -55,5 +85,8 @@ export class TaskService {
             task.text = text
             task.done = done
         });
+
+        // Store tasks in local storage
+        this._storeAllTasks()
     }
 }
