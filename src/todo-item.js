@@ -20,9 +20,10 @@ export class TodoItem extends LitElement {
     }
 
     render() {
+        // The .checked REALLY makes a difference here, @see https://stackoverflow.com/a/55994717
         return html`
             <div>
-                <input id="done" type="checkbox" ${this.done ? 'checked' : ''} @click=${this._onClickCheckbox} />
+                <input id="done" type="checkbox" .checked="${this.done}" @click=${this._onClickCheckbox} />
                 <input id="task" type="text" value="${this.task}" @change=${this._onInputFieldChanged}  />
             </div>
         `
