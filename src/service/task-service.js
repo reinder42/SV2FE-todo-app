@@ -3,12 +3,22 @@ import { Task } from "./task.js";
 export class TaskService {
 
     constructor() {
+
+        // Array with task objects
         this.tasks = []
 
+        // Load tasks from storage
         this._loadAllTasks()
     }
 
+    /**
+     * Load tasks from storage
+     *
+     * @private
+     */
     _loadAllTasks() {
+
+        // Hard-coded tasks
         this.tasks = [
             'Remember the milk',
             'Do the dishes',

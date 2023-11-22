@@ -11,12 +11,45 @@ export class TodoList extends LitElement {
         super()
 
         // It's better to use dependency injection for taskService
+        // but ya can't, with Lit!
         this.taskService = new TaskService()
     }
 
     render() {
-        return this.taskService.getAllTasks().map(task => html`
-            <todo-item ${task.done ? 'done' : ''} uuid="${task.uuid}" task="${task.text}">${task.text}</todo-item>`)
+
+        // Loop over all tasks with map()
+        return this.taskService.getAllTasks().map(function(task) {
+
+            // Construct a todo-item elment ye olde way
+            const item = document.createElement('todo-item')
+            item.setAttribute('uuid', task.uuid)
+            item.setAttribute('task', task.text)
+            item.textContent = task.text
+
+            // Only set attribute if task is done (empty attribute)
+            if(task.done) {
+                item.setAttribute('done')
+            }
+
+            // Add event listener for custom 'taskupdate' event from <todo-item>
+            item.addEventListener('taskupdate', this._onTaskUpdate.bind(this))
+
+            // Return HTML element
+            return item
+
+            // 'this' below here is the 2nd parameter of map(f, this)
+            // so we can use this inside the map callback function
+        }, this)
+    }
+
+    /**
+     * Event handler for custom 'taskupdate' event
+     *
+     * @param e Event passed to event handler
+     * @private
+     */
+    _onTaskUpdate(e) {
+        this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done)
     }
 
     static get styles() {
