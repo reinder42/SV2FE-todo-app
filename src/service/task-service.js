@@ -23,8 +23,6 @@ export class TaskService {
 
         const tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
 
-        console.log(tasks)
-
         // Check integrity of 'tasks'
         // ...
 
@@ -40,8 +38,6 @@ export class TaskService {
 
             // Parse from JSON string to JS objects
             this.tasks = JSON.parse(tasks)
-
-            console.log(this.tasks)
         }
     }
 
