@@ -60,7 +60,20 @@ export class TodoList extends LitElement {
      * @private
      */
     _onTaskUpdate(e) {
-        this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done)
+
+        // Remove or update task
+        if(e.detail.remove === true) {
+
+            // Remove task
+            this.taskService.removeTask(e.detail.uuid)
+
+            // Request UI update
+            this.requestUpdate()
+        } else {
+
+            // Update task -- no re-render needed
+            this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done)
+        }
     }
 
     /**

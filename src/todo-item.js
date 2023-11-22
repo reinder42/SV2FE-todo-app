@@ -37,6 +37,7 @@ export class TodoItem extends LitElement {
             <div>
                 <input id="done" type="checkbox" .checked="${this.done}" @click=${this._onClickCheckbox} />
                 <input id="task" type="text" value="${this.task}" @change=${this._onInputFieldChanged}  />
+                <button @click=${this._onClickRemove}>Remove</button>
             </div>
         `
     }
@@ -72,6 +73,17 @@ export class TodoItem extends LitElement {
     }
 
     /**
+     * Click handler for Remove button
+     *
+     * @param e Event passed to handler
+     * @private
+     */
+    _onClickRemove(e) {
+        // Dispatch event to remove task by UUID
+        this._dispatchUpdateEvent(true)
+    }
+
+    /**
      * Dispatch a custom 'taskupdate' event to listeners,
      * which includes a detail object with the task UUID,
      * text and 'done' status. Listening for this event
@@ -80,7 +92,7 @@ export class TodoItem extends LitElement {
      *
      * @private
      */
-    _dispatchUpdateEvent() {
+    _dispatchUpdateEvent(remove = false) {
 
         // Construct custom event
         const update = new CustomEvent('taskupdate', {
@@ -90,7 +102,8 @@ export class TodoItem extends LitElement {
             detail: {
                 uuid: this.uuid, // Unique ID
                 done: this.done, // Task status
-                text: this.task  // Task text
+                text: this.task,  // Task text
+                remove: remove   // Should remove this task?
             }
         });
 

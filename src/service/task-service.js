@@ -99,4 +99,18 @@ export class TaskService {
         // Invoke storeAllTasks to persist in local storage
         this._storeAllTasks()
     }
+
+    /**
+     * Remove task by UUID
+     *
+     * @param uuid UUID of task to remove
+     */
+    removeTask(uuid) {
+
+        // Remove task by creating a new array without that task, using filter()
+        this.tasks = this.tasks.filter(task => task.uuid !== uuid)
+
+        // Invoke storeAllTasks to persist in local storage
+        this._storeAllTasks()
+    }
 }
