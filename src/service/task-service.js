@@ -85,4 +85,18 @@ export class TaskService {
         // Store tasks in local storage
         this._storeAllTasks()
     }
+
+    /**
+     * Add a task
+     */
+    addTask() {
+        // Create new task object
+        const task = new Task('', false)
+
+        // Push task object onto tasks array
+        this.tasks.push(task)
+
+        // Invoke storeAllTasks to persist in local storage
+        this._storeAllTasks()
+    }
 }

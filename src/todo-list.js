@@ -4,21 +4,20 @@ import {TaskService} from "./service/task-service.js";
 
 export class TodoList extends LitElement {
     static get properties() {
-        return {}
+        return { } // No reactive properties
     }
 
     constructor() {
         super()
 
-        // It's better to use dependency injection for taskService
-        // but ya can't, with Lit!
+        // Get a reference to the task service
         this.taskService = new TaskService()
     }
 
     render() {
 
         // Loop over all tasks with map()
-        return this.taskService.getAllTasks().map(function(task) {
+        const items = this.taskService.getAllTasks().map(function(task) {
 
             // Construct a todo-item elment ye olde way
             const item = document.createElement('todo-item')
@@ -40,6 +39,18 @@ export class TodoList extends LitElement {
             // 'this' below here is the 2nd parameter of map(f, this)
             // so we can use this inside the map callback function
         }, this)
+
+        // Create button
+        const button = document.createElement('button')
+        button.textContent = 'Add task'
+
+        // On click, invoke addTask() on taskService
+        button.addEventListener('click', this._onAddTask.bind(this))
+
+        // Add button as child element
+        items.push(button)
+
+        return items
     }
 
     /**
@@ -50,6 +61,22 @@ export class TodoList extends LitElement {
      */
     _onTaskUpdate(e) {
         this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done)
+    }
+
+    /**
+     * Add a new task to the TaskService and manually request that the UI updates
+     * @see https://lit.dev/docs/components/properties/#mutating-properties
+     *
+     * @param e Event
+     * @private
+     */
+    _onAddTask(e) {
+
+        // Add task to service
+        this.taskService.addTask()
+
+        // Request UI update
+        this.requestUpdate()
     }
 
     static get styles() {
