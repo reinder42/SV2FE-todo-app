@@ -3,11 +3,23 @@ import { Task } from "./service/task.js";
 import { TaskService } from "./service/task-service.js";
 
 export class TodoItem extends LitElement {
+
+    /**
+     * Properties (reflected to attributes)
+     * Please note that the properties of the Task class have
+     * been deconstructed here, so we can map them to HTML element
+     * attributes. This is not necessary; we could have used an Object
+     * property with custom convertor. That way, the 3 properties would
+     * have been kept inside the component and not been exposed via HTML
+     * attributes.
+     *
+     * @returns Properties
+     */
     static get properties() {
         return {
-            done: { type: Boolean, reflect: true },
-            task: { type: String, reflect: true },
-            uuid: { type: String, reflect: true }
+            done: { type: Boolean, reflect: true }, // Task status
+            task: { type: String, reflect: true },  // Task text
+            uuid: { type: String, reflect: true }   // Task unique ID
         }
     }
 
