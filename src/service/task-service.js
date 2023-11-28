@@ -17,8 +17,9 @@ export class TaskService {
     }
 
     /**
-     * Load tasks from storage
+     * Loads all tasks from local storage
      *
+     * @returns {Promise<[Task]>}
      * @private
      */
     _loadAllTasks() {
@@ -47,6 +48,11 @@ export class TaskService {
         });
     }
 
+    /**
+     * Get all tasks
+     *
+     * @returns {Promise<[Task]>}
+     */
     getAllTasks() {
         return this._loadAllTasks();
     }
@@ -54,6 +60,8 @@ export class TaskService {
     /**
      * Store tasks in local storage
      *
+     * @param tasks
+     * @returns {Promise<[Task]>}
      * @private
      */
     _storeAllTasks(tasks) {
@@ -72,11 +80,14 @@ export class TaskService {
     }
 
     /**
+     *
      * Update task text and status based on UUID
      *
      * @param uuid Unique ID of the to-update task
      * @param text Updated task text
      * @param done Updated task status
+     *
+     * @returns {Promise<[Task]>}
      */
     updateTask(uuid, text, done) {
 
@@ -103,6 +114,8 @@ export class TaskService {
 
     /**
      * Add a task
+     *
+     * @returns {Promise<[Task]>}
      */
     addTask() {
 
@@ -124,6 +137,7 @@ export class TaskService {
      * Remove task by UUID
      *
      * @param uuid UUID of task to remove
+     * @returns {Promise<[Task]>}
      */
     removeTask(uuid) {
 
