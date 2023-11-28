@@ -25,27 +25,26 @@ export class TaskService {
     _loadAllTasks() {
 
         // Return a promise
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
-            const tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
+            // Get from local storage
+            let tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
 
-            // Check integrity of 'tasks'
-            // TODO reject()
-
+            // Hard-coded tasks
             if(tasks == null) {
-
-                // Hard-coded tasks
-                resolve([
+                return resolve([
                     'Remember the milk',
                     'Do the dishes',
                     'Eat pancakes'
                 ].map(text => new Task(text, false)))
-            } else {
-
-                // Resolve and return array of tasks
-                resolve(JSON.parse(tasks))
             }
-        });
+
+            // Convert from JSON string to object
+            tasks = JSON.parse(tasks)
+
+            // Resolve and return array of tasks
+            resolve(tasks)
+        })
     }
 
     /**
@@ -67,9 +66,7 @@ export class TaskService {
     _storeAllTasks(tasks) {
 
         // Return a promise that always resolves
-        return new Promise((resolve, reject) => {
-
-            // TODO reject
+        return new Promise((resolve) => {
 
             // Local storage only stores strings, so we convert from object to string via JSON
             window.localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(tasks))

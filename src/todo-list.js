@@ -20,7 +20,9 @@ export class TodoList extends LitElement {
         this.taskService = new TaskService()
 
         // Grab tasks from task service
-        this.taskService.getAllTasks().then(tasks => this.tasks = tasks)
+        this.taskService.getAllTasks().then(tasks => this.tasks = tasks).catch((error) => {
+            console.log(error)
+        })
     }
 
     render() {
@@ -97,7 +99,7 @@ export class TodoList extends LitElement {
     }
 
     /**
-     * Add a new task to the TaskService and manually request that the UI updates
+     * Add a new task to the TaskService
      * @see https://lit.dev/docs/components/properties/#mutating-properties
      *
      * @param e Event
