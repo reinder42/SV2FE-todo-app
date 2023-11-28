@@ -92,7 +92,7 @@ export class TaskService {
     updateTask(uuid, text, done) {
 
         // Get all tasks
-        this.getAllTasks().then((tasks) => {
+        return this.getAllTasks().then((tasks) => {
 
             // Loop over all tasks to find the one to update
             tasks.forEach(function (task) {
