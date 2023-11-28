@@ -1,17 +1,19 @@
 import { Task } from "./task.js";
 
+/**
+ * TaskService
+ *
+ * Note: TaskService doesn't have a reference to an array with Task objects.
+ * The service serves as a pass-through to LocalStorage or any other back-end API.
+ * Actions on the back-end storage are taken by either providing a tasks array,
+ * or by first fetching the tasks from the back-end (i.e., prior to deleting a task).
+ */
 export class TaskService {
 
     constructor() {
 
         // Constant for local storage key
         this.LOCAL_STORAGE_KEY = '_tasks'
-
-        // Array with task objects
-        this.tasks = []
-
-        // Load tasks from storage
-        this._loadAllTasks()
     }
 
     /**
@@ -21,24 +23,32 @@ export class TaskService {
      */
     _loadAllTasks() {
 
-        const tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
+        // Return a promise
+        return new Promise((resolve, reject) => {
 
-        // Check integrity of 'tasks'
-        // ...
+            const tasks = window.localStorage.getItem(this.LOCAL_STORAGE_KEY)
 
-        if(tasks == null) {
+            // Check integrity of 'tasks'
+            // TODO reject()
 
-            // Hard-coded tasks
-            this.tasks = [
-                'Remember the milk',
-                'Do the dishes',
-                'Eat pancakes'
-            ].map(text => new Task(text, false))
-        } else {
+            if(tasks == null) {
 
-            // Parse from JSON string to JS objects
-            this.tasks = JSON.parse(tasks)
-        }
+                // Hard-coded tasks
+                resolve([
+                    'Remember the milk',
+                    'Do the dishes',
+                    'Eat pancakes'
+                ].map(text => new Task(text, false)))
+            } else {
+
+                // Resolve and return array of tasks
+                resolve(JSON.parse(tasks))
+            }
+        });
+    }
+
+    getAllTasks() {
+        return this._loadAllTasks();
     }
 
     /**
@@ -46,18 +56,19 @@ export class TaskService {
      *
      * @private
      */
-    _storeAllTasks() {
+    _storeAllTasks(tasks) {
 
-        // Local storage only stores strings, so we convert from object to string via JSON
-        window.localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(this.tasks))
-    }
+        // Return a promise that always resolves
+        return new Promise((resolve, reject) => {
 
-    /**
-     * Returns an array of all tasks
-     * @returns Array of Task objects
-     */
-    getAllTasks() {
-        return this.tasks
+            // TODO reject
+
+            // Local storage only stores strings, so we convert from object to string via JSON
+            window.localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(tasks))
+
+            // Resolve promise and pass tasks
+            resolve(tasks)
+        })
     }
 
     /**
@@ -69,35 +80,44 @@ export class TaskService {
      */
     updateTask(uuid, text, done) {
 
-        // Loop over all tasks to find the one to update
-        this.tasks.forEach(function (task) {
+        // Get all tasks
+        this.getAllTasks().then((tasks) => {
 
-            // If this is not the task we're looking for
-            if (task.uuid !== uuid) {
-                return false
-            }
+            // Loop over all tasks to find the one to update
+            tasks.forEach(function (task) {
 
-            // Update task text and status
-            task.text = text
-            task.done = done
-        });
+                // If this is not the task we're looking for
+                if (task.uuid !== uuid) {
+                    return false
+                }
 
-        // Store tasks in local storage
-        this._storeAllTasks()
+                // Update task text and status
+                task.text = text
+                task.done = done
+            })
+
+            // Invoke storeAllTasks to persist in local storage
+            return this._storeAllTasks(tasks)
+        })
     }
 
     /**
      * Add a task
      */
     addTask() {
-        // Create new task object
-        const task = new Task('', false)
 
-        // Push task object onto tasks array
-        this.tasks.push(task)
+        // Get all tasks
+        return this.getAllTasks().then(tasks => {
 
-        // Invoke storeAllTasks to persist in local storage
-        this._storeAllTasks()
+            // Create new task object
+            const task = new Task('', false)
+
+            // Push task object onto tasks array
+            tasks.push(task)
+
+            // Invoke storeAllTasks to persist in local storage
+            return this._storeAllTasks(tasks)
+        })
     }
 
     /**
@@ -107,10 +127,14 @@ export class TaskService {
      */
     removeTask(uuid) {
 
-        // Remove task by creating a new array without that task, using filter()
-        this.tasks = this.tasks.filter(task => task.uuid !== uuid)
+        // Get all tasks
+        return this.getAllTasks().then(tasks => {
 
-        // Invoke storeAllTasks to persist in local storage
-        this._storeAllTasks()
+            // Remove task by creating a new array without that task, using filter()
+            tasks = tasks.filter(task => task.uuid !== uuid)
+
+            // Store new tasks array
+            return this._storeAllTasks(tasks)
+        })
     }
 }

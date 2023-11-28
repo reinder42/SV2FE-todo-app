@@ -4,20 +4,29 @@ import {TaskService} from "./service/task-service.js";
 
 export class TodoList extends LitElement {
     static get properties() {
-        return { } // No reactive properties
+        return {
+            tasks: { type: Array } // Observe changes to 'tasks' property
+        }
     }
 
     constructor() {
         super()
 
+        // Start with empty array
+        this.tasks = []
+
         // Get a reference to the task service
+        // Preferred way to do this: use dependency injection to make dependencies clear!
         this.taskService = new TaskService()
+
+        // Grab tasks from task service
+        this.taskService.getAllTasks().then(tasks => this.tasks = tasks)
     }
 
     render() {
 
         // Loop over all tasks with map()
-        const items = this.taskService.getAllTasks().map(function(task) {
+        const items = this.tasks.map(function(task) {
 
             // Construct a todo-item elment ye olde way
             const item = document.createElement('todo-item')
@@ -64,15 +73,26 @@ export class TodoList extends LitElement {
         // Remove or update task
         if(e.detail.remove === true) {
 
-            // Remove task
-            this.taskService.removeTask(e.detail.uuid)
+            // Remove task via service
+            this.taskService.removeTask(e.detail.uuid).then((tasks) => {
 
-            // Request UI update
-            this.requestUpdate()
+                // Update tasks property and trigger re-render
+                this.tasks = tasks
+
+            }).catch((error) => {
+                console.log(error)
+            }).finally(() => {
+                console.log('Task removed!')
+            })
+
         } else {
 
             // Update task -- no re-render needed
-            this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done)
+            this.taskService.updateTask(e.detail.uuid, e.detail.text, e.detail.done).catch((error) => {
+                console.log(error)
+            }).finally(() => {
+                console.log('Task updated!')
+            })
         }
     }
 
@@ -86,10 +106,16 @@ export class TodoList extends LitElement {
     _onAddTask(e) {
 
         // Add task to service
-        this.taskService.addTask()
+        this.taskService.addTask().then((tasks) => {
 
-        // Request UI update
-        this.requestUpdate()
+            // Update tasks property and trigger re-render
+            this.tasks = tasks
+
+        }).catch((error) => {
+            console.log(error)
+        }).finally(() => {
+            console.log('Task added!')
+        })
     }
 
     static get styles() {
