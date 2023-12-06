@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,8 +8,21 @@
     <link rel="stylesheet" href="./src/index.css" />
 
     <script type="module" src="/src/todo-list.js"></script>
-  </head>
-  <body>
-    <todo-list></todo-list>
-  </body>
+    <script type="module" src="/src/todo-dashboard.js"></script>
+</head>
+<body>
+    <div id="outlet"></div>
+
+    <script type="module">
+        import { Router } from "@vaadin/router"
+
+        const outlet = document.querySelector('#outlet')
+        const router = new Router(outlet)
+
+        router.setRoutes([
+            { path: '/', component: 'todo-list' },
+            { path: '/dashboard', component: 'todo-dashboard' }
+        ])
+    </script>
+</body>
 </html>
