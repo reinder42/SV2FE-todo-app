@@ -7,22 +7,9 @@
     <title>Todo's</title>
     <link rel="stylesheet" href="./src/index.css" />
 
-    <script type="module" src="/src/todo-list.js"></script>
-    <script type="module" src="/src/todo-dashboard.js"></script>
+    <script type="module" src="/src/main.js"></script>
 </head>
 <body>
     <div id="outlet"></div>
-
-    <script type="module">
-        import { Router } from "@vaadin/router"
-
-        const outlet = document.querySelector('#outlet')
-        const router = new Router(outlet)
-
-        router.setRoutes([
-            { path: '/', component: 'todo-list' },
-            { path: '/dashboard', component: 'todo-dashboard' }
-        ])
-    </script>
 </body>
 </html>
